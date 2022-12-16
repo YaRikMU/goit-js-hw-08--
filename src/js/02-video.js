@@ -19,8 +19,8 @@ localStorage.setItem(KEY_TIME, seconds);
 
 
 player.setCurrentTime(localStorage.getItem(KEY_TIME) || 0)
-.then(function(data) {
-    console.log(data);
-})
-.catch(function (error)
-{console.error(error)})
+// .then(function(data) {
+//     console.log(data);
+// })
+// .catch(function (error)
+// {console.error(error)})
