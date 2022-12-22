@@ -1,48 +1,34 @@
 import throttle from 'lodash.throttle';
 
+const LOCALSTORAGE_KEY = 'selectedFilters';
 const formEl = document.querySelector('.feedback-form');
 
-const LOCAL_STORAGE_KEY = 'feedback-form-state';
-
-let data = {};
-
-loadForm();
-
-formEl.addEventListener('input', throttle(onSaveFormInput, 500));
+initForm();
 
 formEl.addEventListener('submit', onFormSubmit);
-
-function onSaveFormInput(evt) {
-  data = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY)) || {};
-
-  data[evt.target.name] = evt.target.value;
-
-  localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
-}
+formEl.addEventListener('input', throttle(onFormInput, 500));
 
 function onFormSubmit(evt) {
-  event.preventDefault();
-  if (!evt.target.email.value || !evt.target.message.value) {
-    alert('Enter all data');
-    return;
-  }
-
-  evt.target.reset();
-  console.log(data);
-  localStorage.removeItem(LOCAL_STORAGE_KEY);
+  evt.preventDefault();
+  const formData = new FormData(formEl);
+  formData.forEach((value, name) => console.log(value, name));
+  evt.currentTarget.reset();
+  localStorage.removeItem(LOCALSTORAGE_KEY);
 }
 
-function loadForm() {
-  try {
-    let formLoad = JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY));
-    if (!formLoad) {
-      return;
-    }
+function onFormInput(evt) {
+  let persistedFilters = localStorage.getItem(LOCALSTORAGE_KEY);
+  persistedFilters = persistedFilters ? JSON.parse(persistedFilters) : {};
+  persistedFilters[evt.target.name] = evt.target.value;
+  localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(persistedFilters));
+}
 
-    data = formLoad;
-    formEl.email.value = data.email || '';
-    formEl.message.value = data.message || '';
-  } catch (error) {
-    console.error('Error.message ', error.message);
+function initForm() {
+  let persistedFilters = localStorage.getItem(LOCALSTORAGE_KEY);
+  if (persistedFilters) {
+    persistedFilters = JSON.parse(persistedFilters);
+    Object.entries(persistedFilters).forEach(([name, value]) => {
+      formEl.elements[name].value = value;
+    });
   }
 }

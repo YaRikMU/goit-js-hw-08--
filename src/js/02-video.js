@@ -8,7 +8,7 @@ const player = new Player(iframe);
 
 
 
-KEY_TIME = "videoplayer-current-time";
+const KEY_TIME = "videoplayer-current-time";
 player.on('timeupdate', throttle(onPlay, 1000));
 
 
